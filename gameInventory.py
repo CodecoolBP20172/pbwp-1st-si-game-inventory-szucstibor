@@ -1,15 +1,28 @@
 # This is the file where you must work. Write code in the functions, create new functions,
 # so they work according to the specification
+import operator
+import csv
+import sys
+_inventory = {"fucks given": 0, "shit": 1, "stack": 1}
+addedItems = []
 total = 0
-loot = []
+imported_inventory = []
+i = 0
 # Displays the inventory.
 
 
+def decor(func):
+    def wrap():
+        print("==========================")
+        func()
+        print("==========================")
+    return wrap
+
+
 def displayInventory(inventory):
-    print("Inventory:")
     total = 0
-    for k, v in inventory.items():
-        print(str(v) + ' ' + str(k))
+    for k, v in _inventory.items():
+        print('{:>0}  {:>12}'.format(v, k))
         total = total + v
     print("Total number of items: ", total)
 
@@ -18,9 +31,8 @@ def displayInventory(inventory):
 
 def add_to_inventory(inventory, addedItems):
     for i in range(len(addedItems)):
-        inventory.setdefault(addedItems[i], 0)
-        inventory[addedItems[i]] = inventory[addedItems[i]]+1
-    print(inventory)
+        _inventory.setdefault(addedItems[i], 0)
+        _inventory[addedItems[i]] = _inventory[addedItems[i]]+1
 
 
 # Takes your inventory and displays it in a well-organized table with
@@ -33,21 +45,38 @@ def add_to_inventory(inventory, addedItems):
 
 
 def print_table(inventory, order=None):
-    for key, value in len(inventory):
-        print("%10.2f    %10.2f" % key, value)
+    if order is None:
+        displayInventory(inventory)
+    elif order is "count,asc":
+        sorted(_inventory.items(), key=operator.itemgetter(1))
+        displayInventory(inventory)
+    elif order is "count,desc":
+        sorted(_inventory.items(), key=operator.itemgetter(1), reverse=True)
+        displayInventory(inventory)
 
 
 # Imports new inventory items from a file
 # The filename comes as an argument, but by default it's
 # "import_inventory.csv". The import automatically merges items by name.
 # The file format is plain text with comma separated values (CSV).
-def import_inventory(inventory, filename="import_inventory.csv"):
-    pass
 
+def import_inventory(inventory, filename="import_inventory.csv"):
+    with open(sys.argv[1], 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        addedItems = list(reader)
+        add_to_inventory(_inventory, addedItems[0])
 
 # Exports the inventory into a .csv file.
 # if the filename argument is None it creates and overwrites a file
 # called "export_inventory.csv". The file format is the same plain text
 # with comma separated values (CSV).
+
+
 def export_inventory(inventory, filename="export_inventory.csv"):
-    pass
+    with open("export_inventory.csv", 'rb') as _inventory:
+        wr = csv.writer(_inventory)
+        wr.writerow(_inventory)
+
+import_inventory(_inventory, filename="import_inventory.csv")
+decorated = decor(displayInventory(_inventory))
+decorated()
