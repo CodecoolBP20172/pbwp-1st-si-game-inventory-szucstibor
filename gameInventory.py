@@ -78,5 +78,5 @@ def export_inventory(inventory, filename="export_inventory.csv"):
         wr.writerow(_inventory)
 
 import_inventory(_inventory, filename="import_inventory.csv")
-decorated = decor(displayInventory(_inventory))
+decorated = decor(print_table(_inventory, order=None))
 decorated()
