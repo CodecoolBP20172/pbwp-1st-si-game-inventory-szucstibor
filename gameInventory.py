@@ -4,15 +4,15 @@ import operator
 import csv
 import sys
 import os
-_inventory = {"fucks given": 0, "shit": 2, "stack": 3}
+_inventory = {"fucks given": 1, "shit": 2, "stack": 3}
 addedItems = []
 total = 0
 imported_inventory = []
 exported_inventory = []
 i = 0
 ordering = ""
-keys = []
-values = []
+sorted_inventory = []
+s = [(k, _inventory[k]) for k in sorted(_inventory, key=_inventory.get, reverse=True)]
 
 # Displays the inventory.
 
@@ -46,18 +46,22 @@ def add_to_inventory(inventory, addedItems):
 # - "count,asc" means the table is ordered by count in ascending order
 
 
-def print_table(inventory, order=None):
-    displayInventory(_inventory)
+def print_table(inv, order):
+    global _inventory
+    global total
+    if order == "count,desc":
+        _inventory = sorted(_inventory.items(), key=_inventory.keys, reverse=True)
+    elif order == "count,asc":
+        _inventory = sorted(_inventory.items(), key=_inventory.keys)
+    print("Inventory: ")
+    print("Count   Item name")
+    print("------------------------------")
+    for k, v in _inventory.items():
+        print('{:>2}  {:>12}'.format(v, k))
+        total = total + v
+    print("------------------------------")
+    print("Total number of items: ", total)
 
-
-def print_table(inventory, order=True):
-    sorted(_inventory, key=_inventory.__getitem__)
-    displayInventory(_inventory)
-
-
-def print_table(inventory, order=False):
-    sorted(_inventory, key=_inventory.__getitem__, reverse=True)
-    displayInventory(_inventory)
 # Imports new inventory items from a file
 # The filename comes as an argument, but by default it's
 # "import_inventory.csv". The import automatically merges items by name.
@@ -77,14 +81,20 @@ def import_inventory(inventory, filename="import_inventory.csv"):
 
 
 def export_inventory(inventory, filename="export_inventory.csv"):
-    export = open("export_inventory.csv", "w")
-    export.writerow(_inventory)
+    with open("export_inventory.csv", 'w') as export:
+        for k, v in inventory.items():
+            if v > 0:
+                for i in range(v):
+                    export.write(k)
+                    export.write(",")
+                else:
+                    export.write(k)
+                    export.write(",")
     export.close()
 
 import_inventory(_inventory, filename="import_inventory.csv")
-displayInventory(_inventory)
-ordering = (input("How would you like to organise the inventory? : "))
-
+ordering = (input(""))
+export_inventory(_inventory, filename="export_inventory.csv")
 
 if ordering == "":
     print_table(_inventory, order=None)
@@ -92,3 +102,5 @@ elif ordering == "count,asc":
     print_table(_inventory, order=True)
 elif ordering == "count,desc":
     print_table(_inventory, order=False)
+else:
+    print_table(_inventory, order=None)
