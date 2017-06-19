@@ -4,7 +4,7 @@ import operator
 import csv
 import sys
 import os
-_inventory = {"fucks given": 1, "shit": 2, "stack": 3}
+_inventory = {}
 addedItems = []
 total = 0
 i = 0
