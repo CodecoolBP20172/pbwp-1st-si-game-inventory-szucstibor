@@ -29,8 +29,7 @@ class GameInventoryTests(unittest.TestCase):
         self.assertDictEqual(_inventory, {"battleaxe": 1, 'dagger': 3, 'gold coin': 1})
 
     def test_export_inventory(self):
-        export_inventory({'dagger': 3, 'gold coin': 1, "battleaxe": 1}, 
-                         "test_inventory_export.csv")
+        export_inventory({'dagger': 3, 'gold coin': 1, "battleaxe": 1}, "test_inventory_export.csv")
 
         with open("test_inventory_export.csv", newline='') as csvfile:
             expected = ["dagger", "gold coin", "battleaxe", "dagger", "dagger"]
